@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Spam AI</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { max-width: 600px; margin: 50px auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .result-box { display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card p-4">
+        <h3 class="text-center mb-3">📧 Detector de Spam</h3>
+        <p class="text-muted text-center">Cole o texto do e-mail ou SMS abaixo para verificar se é confiável.</p>
+        
+        <div class="mb-3">
+            <textarea id="textoInput" class="form-control" rows="4" placeholder="Ex: WINNER!! Claim your free $1000 prize right now!"></textarea>
+        </div>
+        
+        <button onclick="verificarSpam()" class="btn btn-primary w-100">Analisar Mensagem</button>
+
+        <div id="resultado" class="result-box alert text-center">
+            <h4 id="statusClasse" class="fw-bold"></h4>
+            <p id="statusProb" class="mb-0"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+async function verificarSpam() {
+    const texto = document.getElementById('textoInput').value;
+    const boxResultado = document.getElementById('resultado');
+    const statusClasse = document.getElementById('statusClasse');
+    const statusProb = document.getElementById('statusProb');
+
+    if (!texto.trim()) {
+        alert("Por favor, digite algum texto!");
+        return;
+    }
+
+    // Faz a chamada à rota /predict que você criou
+    const response = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto: texto })
+    });
+
+    const dados = await response.json();
+
+    if (dados.classe) {
+        boxResultado.style.display = 'block';
+        const porcentagem = (dados.probabilidade * 100).toFixed(1);
+
+        if (dados.classe === 'spam') {
+            boxResultado.className = 'result-box alert alert-danger';
+            statusClasse.innerText = '🚨 Mensagem Detectada como SPAM';
+        } else {
+            boxResultado.className = 'result-box alert alert-success';
+            statusClasse.innerText = '✅ Mensagem Legítima (HAM)';
+        }
+        
+        statusProb.innerText = `Confiança do modelo: ${porcentagem}%`;
+    }
+}
+</script>
+
+</body>
+</html>
