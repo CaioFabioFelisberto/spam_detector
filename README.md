@@ -47,6 +47,7 @@ detector_de_spam/
 ├── app.py                      # Servidor Flask (API e Rotas Web)
 ├── requirements.txt            # Dependências do projeto
 └── README.md                   # Documentação
+```
 
 # Como executar o projeto
 ## 1. Pré-requisitos
@@ -56,7 +57,6 @@ Certifique-se de ter o Python 3.8+ instalado.
 ```bash
 pip install -r requirements.txt
 ```
-
 ## 3. Treinar o Modelo (Opcional)
 Caso queira refazer o treinamento e gerar novos artefatos .pkl:
 ```bash
